@@ -1,6 +1,12 @@
 import React from "react";
 
 const App = () => {
+	const [searchTerm, setSearchTerm] = React.useState("");
+
+	const handleChange = (event) => {
+		setSearchTerm(event.target.value);
+	};
+
 	const stories = [
 		{
 			title: "React",
@@ -19,7 +25,6 @@ const App = () => {
 			objectID: 1,
 		},
 	];
-	const handleChange = (event) => console.log(event.target.value);
 
 	return (
 		<div>
@@ -29,6 +34,9 @@ const App = () => {
 			<input id="search" type="text" onChange={handleChange} />
 			<hr />
 			<List list={stories} />
+			<p>
+				Searching for <strong>{searchTerm}</strong>
+			</p>
 		</div>
 	);
 };
