@@ -2,7 +2,7 @@ import React from "react";
 
 const App = () => {
 	//Hook to set searchTerm:
-	const [searchTerm, setSearchTerm] = React.useState("");
+	const [searchTerm, setSearchTerm] = React.useState("React");
 
 	//Callback Handler for SearchTerm:
 	const handleSearch = (event) => {
@@ -37,7 +37,7 @@ const App = () => {
 		<div>
 			<h1>My Hacker Stories</h1>
 
-			<Search onSearch={handleSearch} onShow={searchTerm} />
+			<Search onSearch={handleSearch} search={searchTerm} />
 
 			<hr />
 			<List list={searchedStories} />
@@ -45,15 +45,16 @@ const App = () => {
 	);
 };
 
-const Search = (props, onShow) => {
+const Search = (props) => {
 	return (
 		<div>
 			<label htmlFor="search">Search: </label>
-			<input id="search" type="text" onChange={props.onSearch} />
-
-			<p>
-				Searching for <strong>{props.searchTerm}</strong>
-			</p>
+			<input
+				id="search"
+				type="text"
+				value={props.search}
+				onChange={props.onSearch}
+			/>
 		</div>
 	);
 };
