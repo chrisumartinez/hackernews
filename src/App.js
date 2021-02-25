@@ -1,16 +1,27 @@
 import React from "react";
 
-const App = () => {
-	//Hook to set searchTerm:
-	const [searchTerm, setSearchTerm] = React.useState(
-		localStorage.getItem("search") || "React"
+//custom hook:
+const useSemiPersistentState = (key, initialState) => {
+	//Hook to set any value:
+	const [value, setValue] = React.useState(
+		localStorage.getItem("key") || initialState
 	);
 
 	//Handling Search Side-Effect using useEffect Hook:
 	React.useEffect(() => {
-		localStorage.setItem("search", searchTerm);
-	}, [searchTerm]);
+		localStorage.setItem("key", value);
+	}, [value, key]);
 
+	return [value, setValue];
+};
+
+const App = () => {
+	//custom hook, call useSemiPersistentState();
+	// another goal of custom hook: reusability
+	const [searchTerm, setSearchTerm] = useSemiPersistentState(
+		"search",
+		"React"
+	);
 	//Callback Handler for SearchTerm:
 	const handleSearch = (event) => {
 		setSearchTerm(event.target.value);
@@ -48,6 +59,7 @@ const App = () => {
 
 			<hr />
 			<List list={searchedStories} />
+			<hr />
 		</div>
 	);
 };
