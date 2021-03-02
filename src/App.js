@@ -15,47 +15,6 @@ const useSemiPersistentState = (key, initialState) => {
 	return [value, setValue];
 };
 
-const StopWatch = () => {
-	const [isOn, setIsOn] = React.useState(false);
-	const [timer, setTimer] = React.useState(0);
-
-	React.useEffect(() => {
-		let interval;
-		if (isOn) {
-			interval = setInterval(() => setTimer((timer) => timer + 1), 1000);
-		}
-
-		return () => clearInterval(interval);
-	}, [isOn]);
-
-	const onReset = () => {
-		setIsOn(false);
-		setTimer(0);
-	};
-
-	return (
-		<div>
-			{timer}
-
-			{!isOn && (
-				<button type="button" onClick={() => setIsOn(true)}>
-					Start
-				</button>
-			)}
-
-			{isOn && (
-				<button type="button" onClick={() => setIsOn(false)}>
-					Stop
-				</button>
-			)}
-
-			<button type="button" onClick={() => onReset()}>
-				Reset
-			</button>
-		</div>
-	);
-};
-
 const App = () => {
 	//custom hook, call useSemiPersistentState();
 	// another goal of custom hook: reusability
@@ -96,29 +55,26 @@ const App = () => {
 		<div>
 			<h1>My Hacker Stories</h1>
 
-			<Search onSearch={handleSearch} search={searchTerm} />
-
+			<InputWithLabel
+				id="search"
+				label="search"
+				value={searchTerm}
+				onInputChange={handleSearch}
+			/>
 			<hr />
 			<List list={searchedStories} />
 			<hr />
-			<StopWatch />
 		</div>
 	);
 };
 
-const Search = (props) => {
-	return (
-		<div>
-			<label htmlFor="search">Search: </label>
-			<input
-				id="search"
-				type="text"
-				value={props.search}
-				onChange={props.onSearch}
-			/>
-		</div>
-	);
-};
+const InputWithLabel = ({ id, label, value, type = "text", onInputChange }) => (
+	<>
+		<label htmlFor={id}>{label}</label>
+		&nbsp;
+		<input id={id} type={type} value={value} onChange={onInputChange} />
+	</>
+);
 
 const List = ({ list }) =>
 	list.map((item) => <Item key={item.objectID} item={item} />);
