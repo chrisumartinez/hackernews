@@ -19,6 +19,12 @@ const initialStories = [
 	},
 ];
 
+// Function to grab async data, returns a promise
+const getAsyncStories = () =>
+	new Promise((resolve) =>
+		setTimeout(() => resolve({ data: { stories: initialStories } }), 2000)
+	);
+
 //custom hook:
 const useSemiPersistentState = (key, initialState) => {
 	//Hook to set any value:
@@ -47,7 +53,15 @@ const App = () => {
 	};
 
 	//Hook to setState of stories:
-	const [stories, setStories] = React.useState(initialStories);
+	const [stories, setStories] = React.useState([]);
+
+	//useEffect Hook to pull data into initialStories:
+	// no dependency to pull data into initialStories:
+	React.useEffect(() => {
+		getAsyncStories().then((result) => {
+			setStories(result.data.stories);
+		});
+	}, []);
 
 	//filter by searchTerm:
 	const searchedStories = stories.filter((story) =>
