@@ -41,6 +41,11 @@ const useSemiPersistentState = (key, initialState) => {
 };
 
 const App = () => {
+	//isLoading Hook:
+	const [isLoading, setIsLoading] = React.useState(false);
+	//error-handling hook:
+	const [isError, setIsError] = React.useState(false);
+
 	//custom hook, call useSemiPersistentState();
 	// another goal of custom hook: reusability
 	const [searchTerm, setSearchTerm] = useSemiPersistentState(
@@ -58,9 +63,14 @@ const App = () => {
 	//useEffect Hook to pull data into initialStories:
 	// no dependency to pull data into initialStories:
 	React.useEffect(() => {
-		getAsyncStories().then((result) => {
-			setStories(result.data.stories);
-		});
+		setIsLoading(true);
+
+		getAsyncStories()
+			.then((result) => {
+				setStories(result.data.stories);
+				setIsLoading(false);
+			})
+			.catch(() => setIsError(true));
 	}, []);
 
 	//filter by searchTerm:
@@ -89,7 +99,13 @@ const App = () => {
 				<strong>Search:</strong>
 			</InputWithLabel>
 			<hr />
-			<List list={searchedStories} onRemoveItem={handleRemoveStory} />
+			{isError && <p>Error Occurred.</p>}
+			{isLoading ? (
+				<p>Loading...</p>
+			) : (
+				<List list={searchedStories} onRemoveItem={handleRemoveStory} />
+			)}
+
 			<hr />
 		</div>
 	);
