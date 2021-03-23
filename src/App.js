@@ -40,7 +40,41 @@ const useSemiPersistentState = (key, initialState) => {
 	return [value, setValue];
 };
 
+const storiesReducer = (state, action) => {
+	//Stories useReducer Method:
+	/*
+	A reducer function always receives state and the action as its arguments. Based on
+	these 2 arguments, it returns a new state.
+
+	A reducer action often associated with a 'type':
+	if type matches => do something.
+	else:
+		throw an error, that implementation is not covered.
+
+	this function is covers only one type, then returns the payload of the incoming action
+	without using the current state to returne a new one. The new state ==  the payload.
+	*/
+	switch (action.type) {
+		case "SET_STORIES":
+			return action.payload;
+
+		case "REMOVE_STORY":
+			return state.filter(
+				(story) => action.payload.objectID !== story.objectID
+			);
+		default:
+			throw new Error();
+	}
+};
+
 const App = () => {
+	//Use hook to call reducer function in app():
+	/*
+	hook receives reducer function + initial state as arguments, returns array with 2 items.
+	1 = current state, 2 = state updater function (dispatch function)
+	*/
+	const [stories, dispatchStories] = React.useReducer(storiesReducer, []);
+
 	//isLoading Hook:
 	const [isLoading, setIsLoading] = React.useState(false);
 	//error-handling hook:
@@ -57,9 +91,6 @@ const App = () => {
 		setSearchTerm(event.target.value);
 	};
 
-	//Hook to setState of stories:
-	const [stories, setStories] = React.useState([]);
-
 	//useEffect Hook to pull data into initialStories:
 	// no dependency to pull data into initialStories:
 	React.useEffect(() => {
@@ -67,7 +98,10 @@ const App = () => {
 
 		getAsyncStories()
 			.then((result) => {
-				setStories(result.data.stories);
+				dispatchStories({
+					type: "SET_STORIES",
+					payload: result.data.stories,
+				});
 				setIsLoading(false);
 			})
 			.catch(() => setIsError(true));
@@ -80,10 +114,13 @@ const App = () => {
 
 	//function to remove a story from list of stories:
 	const handleRemoveStory = (item) => {
-		const newStories = stories.filter(
-			(story) => item.objectID !== story.objectID
-		);
-		setStories(newStories);
+		// const newStories = stories.filter(
+		// 	(story) => item.objectID !== story.objectID
+		// );
+		dispatchStories({
+			type: "REMOVE_STORY",
+			payload: item,
+		});
 	};
 
 	return (
