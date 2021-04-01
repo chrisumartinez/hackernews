@@ -21,9 +21,10 @@ const initialStories = [
 
 // Function to grab async data, returns a promise
 const getAsyncStories = () =>
-	new Promise((resolve) =>
-		setTimeout(() => resolve({ data: { stories: initialStories } }), 2000)
-	);
+	// new Promise((resolve) =>
+	// 	setTimeout(() => resolve({ data: { stories: initialStories } }), 2000)
+	// );
+	new Promise((resolve, reject) => setTimeout(reject, 2000));
 
 //custom hook:
 const useSemiPersistentState = (key, initialState) => {
@@ -55,13 +56,32 @@ const storiesReducer = (state, action) => {
 	without using the current state to returne a new one. The new state ==  the payload.
 	*/
 	switch (action.type) {
-		case "SET_STORIES":
-			return action.payload;
-
+		case "STORIES_FETCH_INIT":
+			return {
+				...state,
+				isLoading: true,
+				isError: false,
+			};
+		case "STORIES_FETCH_SUCCESS":
+			return {
+				...state,
+				isLoading: false,
+				isError: false,
+				data: action.payload,
+			};
+		case "STORIES_FETCH_FAILURE":
+			return {
+				...state,
+				isLoading: false,
+				isError: true,
+			};
 		case "REMOVE_STORY":
-			return state.filter(
-				(story) => action.payload.objectID !== story.objectID
-			);
+			return {
+				...state,
+				data: state.data.filter(
+					(story) => action.payload.objectID !== story.objectID
+				),
+			};
 		default:
 			throw new Error();
 	}
@@ -73,12 +93,16 @@ const App = () => {
 	hook receives reducer function + initial state as arguments, returns array with 2 items.
 	1 = current state, 2 = state updater function (dispatch function)
 	*/
-	const [stories, dispatchStories] = React.useReducer(storiesReducer, []);
+	const [stories, dispatchStories] = React.useReducer(storiesReducer, {
+		data: [],
+		isLoading: false,
+		isError: false,
+	});
 
-	//isLoading Hook:
-	const [isLoading, setIsLoading] = React.useState(false);
-	//error-handling hook:
-	const [isError, setIsError] = React.useState(false);
+	// //isLoading Hook:
+	// const [isLoading, setIsLoading] = React.useState(false);
+	// //error-handling hook:
+	// const [isError, setIsError] = React.useState(false);
 
 	//custom hook, call useSemiPersistentState();
 	// another goal of custom hook: reusability
@@ -94,21 +118,20 @@ const App = () => {
 	//useEffect Hook to pull data into initialStories:
 	// no dependency to pull data into initialStories:
 	React.useEffect(() => {
-		setIsLoading(true);
+		dispatchStories({ type: "STORIES_FETCH_INIT" });
 
 		getAsyncStories()
 			.then((result) => {
 				dispatchStories({
-					type: "SET_STORIES",
+					type: "STORIES_FETCH_SUCCESS",
 					payload: result.data.stories,
 				});
-				setIsLoading(false);
 			})
-			.catch(() => setIsError(true));
+			.catch(() => dispatchStories({ type: "STORIES_FETCH_FAILURE" }));
 	}, []);
 
 	//filter by searchTerm:
-	const searchedStories = stories.filter((story) =>
+	const searchedStories = stories.data.filter((story) =>
 		story.title.toLowerCase().includes(searchTerm.toLowerCase())
 	);
 
@@ -136,8 +159,8 @@ const App = () => {
 				<strong>Search:</strong>
 			</InputWithLabel>
 			<hr />
-			{isError && <p>Error Occurred.</p>}
-			{isLoading ? (
+			{stories.isError && <p>Error Occurred.</p>}
+			{stories.isLoading ? (
 				<p>Loading...</p>
 			) : (
 				<List list={searchedStories} onRemoveItem={handleRemoveStory} />
