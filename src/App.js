@@ -1,31 +1,6 @@
 import React from "react";
 
-const initialStories = [
-	{
-		title: "React",
-		url: "https://reactjs.org/",
-		author: "Jordan Walke",
-		num_comments: 3,
-		points: 4,
-		objectID: 0,
-	},
-	{
-		title: "Redux",
-		url: "https://redux.js.org/",
-		author: "Dan Abramov, Andrew Clark",
-		num_comments: 2,
-		points: 5,
-		objectID: 1,
-	},
-];
-
-// Function to grab async data, returns a promise
-const getAsyncStories = () =>
-	// new Promise((resolve) =>
-	// 	setTimeout(() => resolve({ data: { stories: initialStories } }), 2000)
-	// );
-	new Promise((resolve, reject) => setTimeout(reject, 2000));
-
+const API_ENDPOINT = "https://hn.algolia.com/api/v1/search?query=";
 //custom hook:
 const useSemiPersistentState = (key, initialState) => {
 	//Hook to set any value:
@@ -120,14 +95,16 @@ const App = () => {
 	React.useEffect(() => {
 		dispatchStories({ type: "STORIES_FETCH_INIT" });
 
-		getAsyncStories()
+		//JS: Use fetch() function to retrieve data from API_ENDPOINT: (fetch() => Browser's native fetch function)
+		fetch(`${API_ENDPOINT}react`) // `${variable}strings to concatenate strings and string vars
+			.then((response) => response.json()) // convert the data into JSON format
 			.then((result) => {
 				dispatchStories({
 					type: "STORIES_FETCH_SUCCESS",
-					payload: result.data.stories,
-				});
+					payload: result.hits,
+				}); //run our logic with successful payload
 			})
-			.catch(() => dispatchStories({ type: "STORIES_FETCH_FAILURE" }));
+			.catch(() => dispatchStories({ type: "STORIES_FETCH_FAILURE" })); //if no payload, fire reducer logic for failure
 	}, []);
 
 	//filter by searchTerm:
