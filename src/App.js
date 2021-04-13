@@ -74,6 +74,24 @@ const App = () => {
 		isError: false,
 	});
 
+	//Standalone function for data fetching:
+	const handleFetchStories = React.useCallback(() => {
+		if (!searchTerm) return;
+
+		dispatchStories({ type: "STORIES_FETCH_INIT" });
+
+		//JS: Use fetch() function to retrieve data from API_ENDPOINT: (fetch() => Browser's native fetch function)
+		fetch(`${API_ENDPOINT}${searchTerm}`) // `${variable}strings to concatenate strings and string vars
+			.then((response) => response.json()) // convert the data into JSON format
+			.then((result) => {
+				dispatchStories({
+					type: "STORIES_FETCH_SUCCESS",
+					payload: result.hits,
+				}); //run our logic with successful payload
+			})
+			.catch(() => dispatchStories({ type: "STORIES_FETCH_FAILURE" })); //if no payload, fire reducer logic for failure
+	}, [searchTerm]);
+
 	// //isLoading Hook:
 	// const [isLoading, setIsLoading] = React.useState(false);
 	// //error-handling hook:
@@ -90,24 +108,10 @@ const App = () => {
 		setSearchTerm(event.target.value);
 	};
 
-	//useEffect Hook to pull data into initialStories:
-	// no dependency to pull data into initialStories:
+	//useEffect Hook to pull data from function handleFetchStories(), dependant on function handleFetchStories()
 	React.useEffect(() => {
-		if (!searchTerm) return;
-
-		dispatchStories({ type: "STORIES_FETCH_INIT" });
-
-		//JS: Use fetch() function to retrieve data from API_ENDPOINT: (fetch() => Browser's native fetch function)
-		fetch(`${API_ENDPOINT}${searchTerm}`) // `${variable}strings to concatenate strings and string vars
-			.then((response) => response.json()) // convert the data into JSON format
-			.then((result) => {
-				dispatchStories({
-					type: "STORIES_FETCH_SUCCESS",
-					payload: result.hits,
-				}); //run our logic with successful payload
-			})
-			.catch(() => dispatchStories({ type: "STORIES_FETCH_FAILURE" })); //if no payload, fire reducer logic for failure
-	}, [searchTerm]);
+		handleFetchStories();
+	}, [handleFetchStories]);
 
 	//filter by searchTerm:
 	const searchedStories = stories.data.filter((story) =>
