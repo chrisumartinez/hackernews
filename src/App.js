@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 
 const API_ENDPOINT = "https://hn.algolia.com/api/v1/search?query=";
 //custom hook:
@@ -111,12 +112,13 @@ const App = () => {
 		dispatchStories({ type: "STORIES_FETCH_INIT" });
 
 		//JS: Use fetch() function to retrieve data from API_ENDPOINT: (fetch() => Browser's native fetch function)
-		fetch(url) // `${variable}strings to concatenate strings and string vars
-			.then((response) => response.json()) // convert the data into JSON format
+		//Axios: Third Party Library, Alternative to fetch()
+		axios // `${variable}strings to concatenate strings and string vars
+			.get(url)
 			.then((result) => {
 				dispatchStories({
 					type: "STORIES_FETCH_SUCCESS",
-					payload: result.hits,
+					payload: result.data.hits,
 				}); //run our logic with successful payload
 			})
 			.catch(() => dispatchStories({ type: "STORIES_FETCH_FAILURE" })); //if no payload, fire reducer logic for failure
