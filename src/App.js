@@ -74,24 +74,6 @@ const App = () => {
 		isError: false,
 	});
 
-	//Standalone function for data fetching:
-	const handleFetchStories = React.useCallback(() => {
-		if (!searchTerm) return;
-
-		dispatchStories({ type: "STORIES_FETCH_INIT" });
-
-		//JS: Use fetch() function to retrieve data from API_ENDPOINT: (fetch() => Browser's native fetch function)
-		fetch(`${API_ENDPOINT}${searchTerm}`) // `${variable}strings to concatenate strings and string vars
-			.then((response) => response.json()) // convert the data into JSON format
-			.then((result) => {
-				dispatchStories({
-					type: "STORIES_FETCH_SUCCESS",
-					payload: result.hits,
-				}); //run our logic with successful payload
-			})
-			.catch(() => dispatchStories({ type: "STORIES_FETCH_FAILURE" })); //if no payload, fire reducer logic for failure
-	}, [searchTerm]);
-
 	// //isLoading Hook:
 	// const [isLoading, setIsLoading] = React.useState(false);
 	// //error-handling hook:
@@ -103,10 +85,42 @@ const App = () => {
 		"search",
 		"React"
 	);
+
+	//hook to grab the url:
+	const [url, setUrl] = React.useState(`${API_ENDPOINT}${searchTerm}`);
+
 	//Callback Handler for SearchTerm:
 	const handleSearch = (event) => {
 		setSearchTerm(event.target.value);
 	};
+
+	//
+	const handleSearchInput = (event) => {
+		setSearchTerm(event.target.value);
+	};
+
+	const handleSearchSubmit = () => {
+		setUrl(`${API_ENDPOINT}${searchTerm}`);
+	};
+
+	//Standalone function for data fetching
+	//Instead of having it private in the useEffect Hook, it is now a outside public function:
+	const handleFetchStories = React.useCallback(() => {
+		if (!searchTerm) return;
+
+		dispatchStories({ type: "STORIES_FETCH_INIT" });
+
+		//JS: Use fetch() function to retrieve data from API_ENDPOINT: (fetch() => Browser's native fetch function)
+		fetch(url) // `${variable}strings to concatenate strings and string vars
+			.then((response) => response.json()) // convert the data into JSON format
+			.then((result) => {
+				dispatchStories({
+					type: "STORIES_FETCH_SUCCESS",
+					payload: result.hits,
+				}); //run our logic with successful payload
+			})
+			.catch(() => dispatchStories({ type: "STORIES_FETCH_FAILURE" })); //if no payload, fire reducer logic for failure
+	}, [url]);
 
 	//useEffect Hook to pull data from function handleFetchStories(), dependant on function handleFetchStories()
 	React.useEffect(() => {
@@ -136,11 +150,18 @@ const App = () => {
 			<InputWithLabel
 				label="search"
 				value={searchTerm}
-				onInputChange={handleSearch}
+				onInputChange={handleSearchInput}
 				isFocused
 			>
 				<strong>Search:</strong>
 			</InputWithLabel>
+			<button
+				type="button"
+				disabled={!searchTerm}
+				onClick={handleSearchSubmit}
+			>
+				Submit
+			</button>
 			<hr />
 			{stories.isError && <p>Error Occurred.</p>}
 			{stories.isLoading ? (
