@@ -93,10 +93,12 @@ const App = () => {
 	//useEffect Hook to pull data into initialStories:
 	// no dependency to pull data into initialStories:
 	React.useEffect(() => {
+		if (!searchTerm) return;
+
 		dispatchStories({ type: "STORIES_FETCH_INIT" });
 
 		//JS: Use fetch() function to retrieve data from API_ENDPOINT: (fetch() => Browser's native fetch function)
-		fetch(`${API_ENDPOINT}react`) // `${variable}strings to concatenate strings and string vars
+		fetch(`${API_ENDPOINT}${searchTerm}`) // `${variable}strings to concatenate strings and string vars
 			.then((response) => response.json()) // convert the data into JSON format
 			.then((result) => {
 				dispatchStories({
@@ -105,7 +107,7 @@ const App = () => {
 				}); //run our logic with successful payload
 			})
 			.catch(() => dispatchStories({ type: "STORIES_FETCH_FAILURE" })); //if no payload, fire reducer logic for failure
-	}, []);
+	}, [searchTerm]);
 
 	//filter by searchTerm:
 	const searchedStories = stories.data.filter((story) =>
@@ -140,7 +142,7 @@ const App = () => {
 			{stories.isLoading ? (
 				<p>Loading...</p>
 			) : (
-				<List list={searchedStories} onRemoveItem={handleRemoveStory} />
+				<List list={stories.data} onRemoveItem={handleRemoveStory} />
 			)}
 
 			<hr />
