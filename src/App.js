@@ -106,23 +106,22 @@ const App = () => {
 
 	//Standalone function for data fetching
 	//Instead of having it private in the useEffect Hook, it is now a outside public function:
-	const handleFetchStories = React.useCallback(() => {
-		if (!searchTerm) return;
-
+	const handleFetchStories = React.useCallback(async () => {
 		dispatchStories({ type: "STORIES_FETCH_INIT" });
 
-		//JS: Use fetch() function to retrieve data from API_ENDPOINT: (fetch() => Browser's native fetch function)
-		//Axios: Third Party Library, Alternative to fetch()
-		axios // `${variable}strings to concatenate strings and string vars
-			.get(url)
-			.then((result) => {
-				dispatchStories({
-					type: "STORIES_FETCH_SUCCESS",
-					payload: result.data.hits,
-				}); //run our logic with successful payload
-			})
-			.catch(() => dispatchStories({ type: "STORIES_FETCH_FAILURE" })); //if no payload, fire reducer logic for failure
+		try {
+			const result = await axios.get(url);
+			dispatchStories({
+				type: "STORIES_FETCH_SUCCESS",
+				payload: result.data.hits,
+			});
+		} catch {
+			dispatchStories({ type: "STORIES_FETCH_FAILURE" });
+		} //if no payload, fire reducer logic for failure
 	}, [url]);
+
+	//JS: Use fetch() function to retrieve data from API_ENDPOINT: (fetch() => Browser's native fetch function)
+	//Axios: Third Party Library, Alternative to fetch()
 
 	//useEffect Hook to pull data from function handleFetchStories(), dependant on function handleFetchStories()
 	React.useEffect(() => {
