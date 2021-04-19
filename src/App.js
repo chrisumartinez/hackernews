@@ -90,18 +90,32 @@ const App = () => {
 	//hook to grab the url:
 	const [url, setUrl] = React.useState(`${API_ENDPOINT}${searchTerm}`);
 
-	//Callback Handler for SearchTerm:
-	const handleSearch = (event) => {
-		setSearchTerm(event.target.value);
-	};
-
 	//
 	const handleSearchInput = (event) => {
 		setSearchTerm(event.target.value);
 	};
 
-	const handleSearchSubmit = () => {
+	const handleSearchSubmit = (event) => {
 		setUrl(`${API_ENDPOINT}${searchTerm}`);
+		event.preventDefault();
+	};
+
+	const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit }) => {
+		return (
+			<form onSubmit={onSearchSubmit}>
+				<InputWithLabel
+					label="search"
+					value={searchTerm}
+					onInputChange={onSearchInput}
+					isFocused
+				>
+					<strong>Search:</strong>
+				</InputWithLabel>
+				<button type="submit" disabled={!searchTerm}>
+					Submit
+				</button>
+			</form>
+		);
 	};
 
 	//Standalone function for data fetching
@@ -128,11 +142,6 @@ const App = () => {
 		handleFetchStories();
 	}, [handleFetchStories]);
 
-	//filter by searchTerm:
-	const searchedStories = stories.data.filter((story) =>
-		story.title.toLowerCase().includes(searchTerm.toLowerCase())
-	);
-
 	//function to remove a story from list of stories:
 	const handleRemoveStory = (item) => {
 		// const newStories = stories.filter(
@@ -147,22 +156,11 @@ const App = () => {
 	return (
 		<div>
 			<h1>My Hacker Stories</h1>
-
-			<InputWithLabel
-				label="search"
-				value={searchTerm}
-				onInputChange={handleSearchInput}
-				isFocused
-			>
-				<strong>Search:</strong>
-			</InputWithLabel>
-			<button
-				type="button"
-				disabled={!searchTerm}
-				onClick={handleSearchSubmit}
-			>
-				Submit
-			</button>
+			<SearchForm
+				searchTerm={searchTerm}
+				onSearchInput={handleSearchInput}
+				onSearchSubmit={handleSearchSubmit}
+			/>
 			<hr />
 			{stories.isError && <p>Error Occurred.</p>}
 			{stories.isLoading ? (
