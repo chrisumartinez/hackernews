@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-import "./App.css";
+import styles from "./App.module.css";
 
 const API_ENDPOINT = "https://hn.algolia.com/api/v1/search?query=";
 //custom hook:
@@ -103,7 +103,7 @@ const App = () => {
 
 	const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit }) => {
 		return (
-			<form onSubmit={onSearchSubmit} className="search-form">
+			<form onSubmit={onSearchSubmit} className={styles.searchForm}>
 				<InputWithLabel
 					label="search"
 					value={searchTerm}
@@ -114,7 +114,7 @@ const App = () => {
 				</InputWithLabel>
 				<button
 					type="submit"
-					className="button button_large"
+					className={`${styles.button}${styles.buttonLarge}`}
 					disabled={!searchTerm}
 				>
 					Submit
@@ -159,8 +159,8 @@ const App = () => {
 	};
 
 	return (
-		<div className="container">
-			<h1 className="headline-primary">My Hacker Stories</h1>
+		<div className={styles.container}>
+			<h1 className={styles.headlinePrimary}>My Hacker Stories</h1>
 			<SearchForm
 				searchTerm={searchTerm}
 				onSearchInput={handleSearchInput}
@@ -197,7 +197,7 @@ const InputWithLabel = ({
 
 	return (
 		<>
-			<label htmlFor={id} className="label">
+			<label htmlFor={id} className={styles.label}>
 				{children}
 			</label>
 			&nbsp;
@@ -207,7 +207,7 @@ const InputWithLabel = ({
 				value={value}
 				onChange={onInputChange}
 				ref={inputRef}
-				className="input"
+				className={styles.input}
 			/>
 		</>
 	);
@@ -220,7 +220,7 @@ const List = ({ list, onRemoveItem }) =>
 
 const Item = ({ item, onRemoveItem }) => {
 	return (
-		<div className="item">
+		<div className={styles.item}>
 			<span style={{ width: "40%" }}>
 				<a href={item.url}>{item.title}</a>
 			</span>
@@ -230,7 +230,7 @@ const Item = ({ item, onRemoveItem }) => {
 			<span>
 				<button
 					type="button"
-					className="button button_small"
+					className={`${styles.button} ${styles.buttonSmall}`}
 					onClick={() => onRemoveItem(item)}
 				>
 					Dismiss
