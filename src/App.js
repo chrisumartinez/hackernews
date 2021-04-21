@@ -1,7 +1,12 @@
 import React from "react";
 import axios from "axios";
-import styles from "./App.module.css";
 import styled from "styled-components";
+import { ReactComponent as Check } from "./check.svg";
+import { ReactComponent as SearchIcon } from "./search.svg";
+//using fontAwesome Icons:
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+
 /*
 CSS in JS
 */
@@ -57,6 +62,11 @@ const StyledButton = styled.button`
 
 const StyledButtonSmall = styled(StyledButton)`
 	padding: 5px;
+
+	&:hover {
+		fill: #ffffff;
+		stroke: #ffffff;
+	}
 `;
 
 const StyledButtonLarge = styled(StyledButton)`
@@ -192,10 +202,10 @@ const App = () => {
 					onInputChange={onSearchInput}
 					isFocused
 				>
-					<strong>Search:</strong>
+					<SearchIcon height="20px" width="20px" />
 				</InputWithLabel>
 				<StyledButtonLarge type="submit" disabled={!searchTerm}>
-					Submit
+					<FontAwesomeIcon icon={faArrowRight} />
 				</StyledButtonLarge>
 			</StyledSearchForm>
 		);
@@ -283,7 +293,6 @@ const InputWithLabel = ({
 				value={value}
 				onChange={onInputChange}
 				ref={inputRef}
-				className={styles.input}
 			/>
 		</>
 	);
@@ -308,7 +317,7 @@ const Item = ({ item, onRemoveItem }) => {
 					type="button"
 					onClick={() => onRemoveItem(item)}
 				>
-					Dismiss
+					<Check height="18px" width="18px" />
 				</StyledButtonSmall>
 			</StyledColumn>
 		</StyledItem>
