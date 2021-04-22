@@ -97,6 +97,9 @@ const StyledInput = styled.input`
 const API_ENDPOINT = "https://hn.algolia.com/api/v1/search?query=";
 //custom hook:
 const useSemiPersistentState = (key, initialState) => {
+	//madeup state:
+	const isMounted = React.useRef(false);
+
 	//Hook to set any value:
 	const [value, setValue] = React.useState(
 		localStorage.getItem("key") || initialState
@@ -104,10 +107,23 @@ const useSemiPersistentState = (key, initialState) => {
 
 	//Handling Search Side-Effect using useEffect Hook:
 	React.useEffect(() => {
-		localStorage.setItem("key", value);
+		if (!isMounted.current) {
+			isMounted.current = true;
+		} else {
+			console.log("A");
+			localStorage.setItem("key", value);
+		}
 	}, [value, key]);
 
 	return [value, setValue];
+};
+
+const getSumComments = (stories) => {
+	console.log("C");
+	return stories.data.reduce(
+		(result, value) => result + value.num_comments,
+		0
+	);
 };
 
 const storiesReducer = (state, action) => {
@@ -157,6 +173,8 @@ const storiesReducer = (state, action) => {
 };
 
 const App = () => {
+	console.log("B: App");
+
 	//Use hook to call reducer function in app():
 	/*
 	hook receives reducer function + initial state as arguments, returns array with 2 items.
@@ -192,6 +210,8 @@ const App = () => {
 		setUrl(`${API_ENDPOINT}${searchTerm}`);
 		event.preventDefault();
 	};
+
+	const sumComments = React.useMemo(() => getSumComments(stories), [stories]);
 
 	const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit }) => {
 		return (
@@ -248,7 +268,9 @@ const App = () => {
 
 	return (
 		<StyledContainer>
-			<StyledHeadlinePrimary>My Hacker Stories</StyledHeadlinePrimary>
+			<StyledHeadlinePrimary>
+				My Hacker Stories with {sumComments} comments.
+			</StyledHeadlinePrimary>
 			<SearchForm
 				searchTerm={searchTerm}
 				onSearchInput={handleSearchInput}
@@ -298,10 +320,11 @@ const InputWithLabel = ({
 	);
 };
 
-const List = ({ list, onRemoveItem }) =>
+const List = React.memo(({ list, onRemoveItem }) =>
 	list.map((item) => (
 		<Item key={item.objectID} item={item} onRemoveItem={onRemoveItem} />
-	));
+	))
+);
 
 const Item = ({ item, onRemoveItem }) => {
 	return (
