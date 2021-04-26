@@ -97,6 +97,24 @@ const storiesReducer = (state, action) => {
 	}
 };
 
+const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit }) => {
+	return (
+		<StyledSearchForm onSubmit={onSearchSubmit}>
+			<InputWithLabel
+				label="search"
+				value={searchTerm}
+				onInputChange={onSearchInput}
+				isFocused
+			>
+				<SearchIcon height="20px" width="20px" />
+			</InputWithLabel>
+			<StyledButtonLarge type="submit" disabled={!searchTerm}>
+				<FontAwesomeIcon icon={faArrowRight} />
+			</StyledButtonLarge>
+		</StyledSearchForm>
+	);
+};
+
 const App = () => {
 	console.log("B: App");
 
@@ -137,24 +155,6 @@ const App = () => {
 	};
 
 	const sumComments = React.useMemo(() => getSumComments(stories), [stories]);
-
-	const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit }) => {
-		return (
-			<StyledSearchForm onSubmit={handleSearchSubmit}>
-				<InputWithLabel
-					label="search"
-					value={searchTerm}
-					onInputChange={onSearchInput}
-					isFocused
-				>
-					<SearchIcon height="20px" width="20px" />
-				</InputWithLabel>
-				<StyledButtonLarge type="submit" disabled={!searchTerm}>
-					<FontAwesomeIcon icon={faArrowRight} />
-				</StyledButtonLarge>
-			</StyledSearchForm>
-		);
-	};
 
 	//Standalone function for data fetching
 	//Instead of having it private in the useEffect Hook, it is now a outside public function:
@@ -273,3 +273,4 @@ const Item = ({ item, onRemoveItem }) => {
 };
 
 export default App;
+export { storiesReducer, SearchForm, InputWithLabel, List, Item };
