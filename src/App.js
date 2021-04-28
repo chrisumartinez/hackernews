@@ -35,7 +35,6 @@ const useSemiPersistentState = (key, initialState) => {
 		if (!isMounted.current) {
 			isMounted.current = true;
 		} else {
-			console.log("A");
 			localStorage.setItem("key", value);
 		}
 	}, [value, key]);
@@ -44,7 +43,6 @@ const useSemiPersistentState = (key, initialState) => {
 };
 
 const getSumComments = (stories) => {
-	console.log("C");
 	return stories.data.reduce(
 		(result, value) => result + value.num_comments,
 		0
@@ -110,14 +108,13 @@ const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit }) => {
 			</InputWithLabel>
 			<StyledButtonLarge type="submit" disabled={!searchTerm}>
 				<FontAwesomeIcon icon={faArrowRight} />
+				Submit
 			</StyledButtonLarge>
 		</StyledSearchForm>
 	);
 };
 
 const App = () => {
-	console.log("B: App");
-
 	//Use hook to call reducer function in app():
 	/*
 	hook receives reducer function + initial state as arguments, returns array with 2 items.
@@ -266,6 +263,7 @@ const Item = ({ item, onRemoveItem }) => {
 					onClick={() => onRemoveItem(item)}
 				>
 					<Check height="18px" width="18px" />
+					Dismiss
 				</StyledButtonSmall>
 			</StyledColumn>
 		</StyledItem>
