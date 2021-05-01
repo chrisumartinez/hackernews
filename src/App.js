@@ -1,23 +1,11 @@
 import React from "react";
 import axios from "axios";
-import { ReactComponent as Check } from "./check.svg";
-import { ReactComponent as SearchIcon } from "./search.svg";
-//using fontAwesome Icons:
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import SearchForm from "./SearchForm";
+import InputWithLabel from "./InputWithLabel";
+import List from "./List";
 
 //styled css components:
-import {
-	StyledContainer,
-	StyledHeadlinePrimary,
-	StyledItem,
-	StyledColumn,
-	StyledButtonLarge,
-	StyledButtonSmall,
-	StyledSearchForm,
-	StyledLabel,
-	StyledInput,
-} from "./styled_components.js";
+import { StyledContainer, StyledHeadlinePrimary } from "./styled_components.js";
 
 const API_ENDPOINT = "https://hn.algolia.com/api/v1/search?query=";
 //custom hook:
@@ -93,25 +81,6 @@ const storiesReducer = (state, action) => {
 		default:
 			throw new Error();
 	}
-};
-
-const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit }) => {
-	return (
-		<StyledSearchForm onSubmit={onSearchSubmit}>
-			<InputWithLabel
-				label="search"
-				value={searchTerm}
-				onInputChange={onSearchInput}
-				isFocused
-			>
-				<SearchIcon height="20px" width="20px" />
-			</InputWithLabel>
-			<StyledButtonLarge type="submit" disabled={!searchTerm}>
-				<FontAwesomeIcon icon={faArrowRight} />
-				Submit
-			</StyledButtonLarge>
-		</StyledSearchForm>
-	);
 };
 
 const App = () => {
@@ -211,64 +180,5 @@ const App = () => {
 	);
 };
 
-const InputWithLabel = ({
-	id,
-	value,
-	type = "text",
-	onInputChange,
-	isFocused,
-	children,
-}) => {
-	const inputRef = React.useRef();
-
-	React.useEffect(() => {
-		if (isFocused && inputRef.current) {
-			inputRef.current.focus();
-		}
-	}, [isFocused]);
-
-	return (
-		<>
-			<StyledLabel htmlFor={id}>{children}</StyledLabel>
-			&nbsp;
-			<StyledInput
-				id={id}
-				type={type}
-				value={value}
-				onChange={onInputChange}
-				ref={inputRef}
-			/>
-		</>
-	);
-};
-
-const List = React.memo(({ list, onRemoveItem }) =>
-	list.map((item) => (
-		<Item key={item.objectID} item={item} onRemoveItem={onRemoveItem} />
-	))
-);
-
-const Item = ({ item, onRemoveItem }) => {
-	return (
-		<StyledItem>
-			<StyledColumn width="40%">
-				<a href={item.url}>{item.title}</a>
-			</StyledColumn>
-			<StyledColumn width="30%">{item.author}</StyledColumn>
-			<StyledColumn width="10%">{item.num_comments}</StyledColumn>
-			<StyledColumn width="10%">{item.points}</StyledColumn>
-			<StyledColumn width="10%">
-				<StyledButtonSmall
-					type="button"
-					onClick={() => onRemoveItem(item)}
-				>
-					<Check height="18px" width="18px" />
-					Dismiss
-				</StyledButtonSmall>
-			</StyledColumn>
-		</StyledItem>
-	);
-};
-
 export default App;
-export { storiesReducer, SearchForm, InputWithLabel, List, Item };
+export { storiesReducer, SearchForm, InputWithLabel, List };
