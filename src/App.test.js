@@ -173,6 +173,11 @@ describe("SearchForm", () => {
 		fireEvent.submit(screen.getByRole("button"));
 		expect(searchFormProps.onSearchSubmit).toHaveBeenCalledTimes(1);
 	});
+
+	test("renders snapshot", () => {
+		const { container } = render(<SearchForm {...searchFormProps} />);
+		expect(container.firstChild).toMatchSnapshot();
+	});
 });
 
 //Testing List Component:
