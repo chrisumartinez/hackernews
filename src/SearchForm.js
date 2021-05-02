@@ -1,8 +1,9 @@
 import { StyledButtonLarge, StyledSearchForm } from "./styled_components.js";
-import { InputWithLabel } from "./InputWithLabel";
+import InputWithLabel from "./InputWithLabel.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { ReactComponent as SearchIcon } from "./search.svg";
+import React from "react";
 
 const SearchForm = ({ searchTerm, onSearchInput, onSearchSubmit }) => {
 	return (

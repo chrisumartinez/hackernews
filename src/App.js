@@ -5,7 +5,11 @@ import InputWithLabel from "./InputWithLabel";
 import List from "./List";
 
 //styled css components:
-import { StyledContainer, StyledHeadlinePrimary } from "./styled_components.js";
+import {
+	StyledContainer,
+	StyledHeadlinePrimary,
+	StyledListContainer,
+} from "./styled_components.js";
 
 const API_ENDPOINT = "https://hn.algolia.com/api/v1/search?query=";
 //custom hook:
@@ -168,13 +172,17 @@ const App = () => {
 				onSearchSubmit={handleSearchSubmit}
 			/>
 			<hr />
-			{stories.isError && <p>Error Occurred.</p>}
-			{stories.isLoading ? (
-				<p>Loading...</p>
-			) : (
-				<List list={stories.data} onRemoveItem={handleRemoveStory} />
-			)}
-
+			<StyledListContainer>
+				{stories.isError && <p>Error Occurred.</p>}
+				{stories.isLoading ? (
+					<p>Loading...</p>
+				) : (
+					<List
+						list={stories.data}
+						onRemoveItem={handleRemoveStory}
+					/>
+				)}
+			</StyledListContainer>
 			<hr />
 		</StyledContainer>
 	);

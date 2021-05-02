@@ -1,16 +1,91 @@
-import { React } from "react";
+import React from "react";
+import { sortBy } from "lodash";
+
 import {
 	StyledItem,
 	StyledColumn,
 	StyledButtonSmall,
+	StyledSortContainer,
+	StyledListContainer,
+	StyledSortColumn,
+	StyledSortButton,
 } from "./styled_components";
 import { ReactComponent as Check } from "./check.svg";
 
-const List = React.memo(({ list, onRemoveItem }) =>
-	list.map((item) => (
-		<Item key={item.objectID} item={item} onRemoveItem={onRemoveItem} />
-	))
-);
+const List = ({ list, onRemoveItem }) => {
+	//sortHook:
+	const [sort, setSort] = React.useState("None");
+
+	const handleSort = (sortKey) => {
+		setSort(sortKey);
+	};
+
+	const SORTS = {
+		None: (list) => list,
+		TITLE: (list) => sortBy(list, "title"),
+		AUTHOR: (list) => sortBy(list, "author"),
+		COMMENTS: (list) => sortBy(list, "comments"),
+		POINTS: (list) => sortBy(list, "points").reverse(),
+	};
+
+	const sortFunction = SORTS[sort];
+
+	const sortedList = sortFunction(list);
+
+	return (
+		<StyledListContainer>
+			<StyledSortContainer>
+				<StyledSortColumn width="40%">
+					<StyledSortButton
+						width="40%"
+						type="button"
+						onClick={() => handleSort("TITLE")}
+					>
+						Title
+					</StyledSortButton>
+				</StyledSortColumn>
+				<StyledSortColumn width="30%">
+					{" "}
+					<StyledSortButton
+						width="30%"
+						type="button"
+						onClick={() => handleSort("AUTHOR")}
+					>
+						Author
+					</StyledSortButton>
+				</StyledSortColumn>
+				<StyledSortColumn width="10%">
+					{" "}
+					<StyledSortButton
+						width="10%"
+						type="button"
+						onClick={() => handleSort("COMMENTS")}
+					>
+						Comments
+					</StyledSortButton>
+				</StyledSortColumn>
+				<StyledSortColumn width="10%">
+					{" "}
+					<StyledSortButton
+						width="10%"
+						type="button"
+						onClick={() => handleSort("POINTS")}
+					>
+						Points
+					</StyledSortButton>
+				</StyledSortColumn>
+				<StyledSortColumn width="10%">Actions</StyledSortColumn>
+			</StyledSortContainer>
+			{sortedList.map((item) => (
+				<Item
+					key={item.objectID}
+					item={item}
+					onRemoveItem={onRemoveItem}
+				/>
+			))}
+		</StyledListContainer>
+	);
+};
 
 const Item = ({ item, onRemoveItem }) => {
 	return (

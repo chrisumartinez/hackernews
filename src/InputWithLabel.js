@@ -1,4 +1,4 @@
-import { React } from "react";
+import React from "react";
 import { StyledLabel, StyledInput } from "./styled_components";
 
 const InputWithLabel = ({
