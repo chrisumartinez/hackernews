@@ -14,10 +14,15 @@ import { ReactComponent as Check } from "./check.svg";
 
 const List = ({ list, onRemoveItem }) => {
 	//sortHook:
-	const [sort, setSort] = React.useState("None");
+	const [sort, setSort] = React.useState({
+		sortKey: "None",
+		isReverse: false,
+	});
 
 	const handleSort = (sortKey) => {
-		setSort(sortKey);
+		const isReverse = sort.sortKey === sortKey && !sort.isReverse;
+
+		setSort({ sortKey, isReverse });
 	};
 
 	const SORTS = {
@@ -28,9 +33,11 @@ const List = ({ list, onRemoveItem }) => {
 		POINTS: (list) => sortBy(list, "points").reverse(),
 	};
 
-	const sortFunction = SORTS[sort];
+	const sortFunction = SORTS[sort.sortKey];
 
-	const sortedList = sortFunction(list);
+	const sortedList = sort.isReverse
+		? sortFunction(list).reverse()
+		: sortFunction(list);
 
 	return (
 		<StyledListContainer>

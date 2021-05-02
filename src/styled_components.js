@@ -120,7 +120,6 @@ width = ${(props) => props.width};
 font-family: "Victor Mono";
 font-size: 18px;
 color: orange;
-
 `;
 
 export const StyledSortColumn = styled.span`
